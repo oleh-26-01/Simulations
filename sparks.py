@@ -9,6 +9,7 @@ user32 = ctypes.windll.user32
 screensize = user32.GetSystemMetrics(1)
 screensize = [screensize, int(screensize * .75)]
 
+
 class Main:
     def __init__(self):
         self.tick_rate = 100
@@ -21,7 +22,8 @@ class Main:
         init()
         self.window = display.set_mode(screensize)
         display.set_caption(self.caption)
-        self.window.fill([0]*3)
+        self.window.fill([0] * 3)
+
 
 class Sparks:
     def __init__(self):
@@ -40,7 +42,7 @@ class Sparks:
 
         pos = mouse.get_pos()
         spark.s_pos = [min(pos[0], screensize[1]), pos[1]]
-        angle = radians(randint(0, 3600)/10)
+        angle = radians(randint(0, 3600) / 10)
         spark.dx, spark.dy = cos(angle), sin(angle)
         spark.e_pos = [spark.s_pos[0] + spark.dx, spark.s_pos[1] + spark.dy]
         spark.length = abs(randint(self.min_size, self.max_size))
@@ -63,8 +65,8 @@ class Sparks:
                 spark.s_pos[0] += spark.dx
                 spark.s_pos[1] += (spark.dy - self.g * spark.length)
             else:
-            	spark.ttm -= 1
-            
+                spark.ttm -= 1
+
             spark.lifetime[1] -= 1
             spark.dy += self.g
 
@@ -83,7 +85,7 @@ class Sparks:
         n = 0
         for spark in self.list:
             n += spark.length
-        
+
         return True if n < self.occupancy else False
 
     def update(self):
@@ -96,7 +98,8 @@ class Sparks:
         self.g = panels.list[6][2]
         self.color_set = panels.list[7][2]
         self.min_size, self.max_size = min(self.min_size, self.max_size), max(self.min_size, self.max_size)
-        self.min_lifetime, self.max_lifetime = min(self.min_lifetime, self.max_lifetime), max(self.min_lifetime, self.max_lifetime)
+        self.min_lifetime, self.max_lifetime = min(self.min_lifetime, self.max_lifetime), max(self.min_lifetime,
+                                                                                              self.max_lifetime)
 
     def color(self):
         color = [
@@ -114,6 +117,7 @@ class Sparks:
         color = color[:3]
         return color
 
+
 class Spark:
     def __init__(self):
         self.s_pos = []
@@ -124,13 +128,14 @@ class Spark:
         self.lifetime = [0, 0]
         self.color = []
 
+
 class Panels:
     def __init__(self):
         self.list = []
         self.class_sparks = None
         self.c_font = None
         self.p_font = None
-        self.font_color = [255]*3
+        self.font_color = [255] * 3
 
     def init(self):
         self.c_font = font.SysFont(None, 24)
@@ -146,14 +151,14 @@ class Panels:
 
     def draw(self):
         x, y = screensize[1], 0
-        draw.rect(window, [20]*3, [screensize[1], 0, int(screensize[0]), screensize[1]])
+        draw.rect(window, [20] * 3, [screensize[1], 0, int(screensize[0]), screensize[1]])
         for i in range(len(self.list)):
             panel = self.list[i]
             text = self.c_font.render(panel[0] + ': ' + str(panel[2]), True, self.font_color)
             window.blit(text, (x + 20, y + i * 50 + 20))
-            draw.line(window, [60]*3, [x + 20, y + i * 50 + 50], [screensize[0] - 20, y + i * 50 + 50], 3)
+            draw.line(window, [60] * 3, [x + 20, y + i * 50 + 50], [screensize[0] - 20, y + i * 50 + 50], 3)
             cxp = x + 20 + panel[2] / panel[1][1] * (screensize[0] - screensize[1] - 40)
-            draw.circle(window, [180]*3, [cxp, y + i * 50 + 50], 10)
+            draw.circle(window, [180] * 3, [cxp, y + i * 50 + 50], 10)
 
     def update(self):
         pos = mouse.get_pos()
@@ -167,6 +172,7 @@ class Panels:
                 n = min(self.list[i][1][1], n) if n > self.list[i][1][1] else n
                 self.list[i][2] = n
 
+
 main = Main()
 sparks = Sparks()
 panels = Panels()
@@ -177,12 +183,12 @@ panels.init()
 
 ttu = False
 while True:
-    dt = lambda x = time() : time() - x
+    dt = lambda x=time(): time() - x
 
     while sparks.ready():
         sparks.add_one()
 
-    window.fill([0]*3)
+    window.fill([0] * 3)
     sparks.move()
     sparks.draw()
     sparks.clear()
@@ -196,11 +202,11 @@ while True:
             ttu = True
         if _event.type == MOUSEBUTTONUP:
             ttu = False
-    
+
     if ttu:
         panels.update()
         sparks.update()
 
     if main.tick_rate < 100:
-        sleep(max(0, 1/main.tick_rate - dt()))
+        sleep(max(0, 1 / main.tick_rate - dt()))
     display.flip()
