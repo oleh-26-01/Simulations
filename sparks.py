@@ -3,10 +3,9 @@ from time import time, sleep
 from math import sin, cos, radians
 from pygame import init, display, draw, event, mouse, font
 from pygame import KEYDOWN, K_ESCAPE, QUIT, MOUSEBUTTONDOWN, MOUSEBUTTONUP
-import ctypes
 
-user32 = ctypes.windll.user32
-screensize = user32.GetSystemMetrics(1)
+
+screensize = 1080
 screensize = [screensize, int(screensize * .75)]
 
 
@@ -30,10 +29,10 @@ class Sparks:
         self.min_size = 3
         self.max_size = 5
         self.min_lifetime = 10
-        self.max_lifetime = 50
+        self.max_lifetime = 100
         self.list = []
-        self.speed = 5
-        self.occupancy = 1000
+        self.speed = 100
+        self.occupancy = 4500
         self.g = .01
         self.color_set = 0
 
@@ -137,17 +136,17 @@ class Panels:
         self.p_font = None
         self.font_color = [255] * 3
 
-    def init(self):
+    def init(self, sparks: Sparks):
         self.c_font = font.SysFont(None, 24)
         self.p_font = font.SysFont('Fixedsys', 12)
-        self.list += [['Min. size', [1, 100], 3]]
-        self.list += [['Max. size', [1, 100], 5]]
-        self.list += [['Min. lifetime', [1, 100], 10]]
-        self.list += [['Max. lifetime', [1, 100], 50]]
-        self.list += [['Occupancy', [1, 3000], 1000]]
-        self.list += [['Speed', [1, 100], 100]]
-        self.list += [['Gravity', [0, .1], .01]]
-        self.list += [['Color set', [0, 8], 0]]
+        self.list += [['Min. size', [1, 100], sparks.min_size]]
+        self.list += [['Max. size', [1, 100], sparks.max_size]]
+        self.list += [['Min. lifetime', [1, 100], sparks.min_lifetime]]
+        self.list += [['Max. lifetime', [1, 200], sparks.max_lifetime]]
+        self.list += [['Occupancy', [1, 5000], sparks.occupancy]]
+        self.list += [['Speed', [1, 200], sparks.speed]]
+        self.list += [['Gravity', [0, .1], sparks.g]]
+        self.list += [['Color set', [0, 8], sparks.color_set]]
 
     def draw(self):
         x, y = screensize[1], 0
@@ -179,7 +178,7 @@ panels = Panels()
 
 main.init()
 window = main.window
-panels.init()
+panels.init(sparks)
 
 ttu = False
 while True:
